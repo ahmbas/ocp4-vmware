@@ -23,7 +23,10 @@
     copy:
       src: pyvmomi
       dest: /opt
-  - name: pyvmomi install 
+
+  - name: pyvmomi install
+    become: true
+    shell: "cd /opt/pyvmomi && python setup.py install"
 
   - name: fetch installer
     get_url:
