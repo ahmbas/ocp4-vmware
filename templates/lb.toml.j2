@@ -1,0 +1,44 @@
+[servers]
+  [servers.api]
+  protocol = "tcp"
+  bind = "0.0.0.0:6443"
+[servers.api.discovery]
+    kind = "static"
+    static_list = [
+    {% for host in members | sort %}
+    "{{ hostvars[host]['ip'] }}:6443",
+    {% endfor %}
+    ]
+[servers.api.healthcheck]
+  kind = "ping"
+  interval = "2s"
+  ping_timeout_duration = "500ms"
+[servers.mcs]
+  protocol = "tcp"
+  bind = "0.0.0.0:22623"
+[servers.mcs.discovery]
+    kind = "static"
+    static_list = [
+    {% for host in members | sort %}
+    "{{ hostvars[host]['ip'] }}:22623",
+    {% endfor %}
+    ]
+[servers.mcs.healthcheck]
+  kind = "ping"
+  interval = "2s"
+  ping_timeout_duration = "500ms"
+
+[servers.apps]
+  protocol = "tcp"
+  bind = "0.0.0.0:443"
+[servers.apps.discovery]
+    kind = "static"
+    static_list = [
+    {% for host in apps_members | sort %}
+    "{{ hostvars[host]['ip'] }}:443",
+    {% endfor %}
+    ]
+[servers.apps.healthcheck]
+  kind = "ping"
+  interval = "2s"
+  ping_timeout_duration = "500ms"

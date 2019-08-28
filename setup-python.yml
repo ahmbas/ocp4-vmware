@@ -1,0 +1,5 @@
+# ansible-galaxy install akirak.coreos-python
+- hosts: masters, workers
+  gather_facts: False
+  roles:
+    - akirak.coreos-python

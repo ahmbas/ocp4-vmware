@@ -1,0 +1,101 @@
+---
+- hosts: localhost
+  tasks:
+  - name: cleanup old install
+    shell: rm -rf /var/tmp/ocp4-deployconfigs/
+    
+  - name: install packages required for the installer setup
+    become: true
+    yum:
+      state: present
+      name:
+      - python-netaddr
+      - httpd
+
+  - name: start httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+  - name: copy pyvmomi
+    become: true
+    copy:
+      src: pyvmomi
+      dest: /opt
+  - name: pyvmomi install 
+
+  - name: fetch installer
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux-{{ ocp_version }}.tar.gz
+      dest: /var/tmp/openshift-install-linux-{{ ocp_version }}.tar.gz
+      use_proxy: yes
+
+  - name: fetch clients
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-{{ ocp_version }}.tar.gz
+      dest: /var/tmp/openshift-client-linux-{{ ocp_version }}.tar.gz
+      use_proxy: yes
+
+  - name: extract installer
+    become: true
+    unarchive:
+      src: /var/tmp/openshift-install-linux-{{ ocp_version }}.tar.gz
+      dest: /usr/local/bin
+      mode: +x
+
+  - name: extract clients
+    become: true
+    unarchive:
+      src: /var/tmp/openshift-client-linux-{{ ocp_version }}.tar.gz
+      dest: /usr/local/bin
+      mode: +x
+
+  - name: create installation directory
+    file:
+      path: /var/tmp/ocp4-deployconfigs
+      state: directory
+      mode: 0755
+  #    owner: openshift-installer
+  #    group: openshift-installer
+
+  - name: copy config file to correct place
+    template:
+      src: templates/install-config.yaml.j2
+      dest: /var/tmp/ocp4-deployconfigs/install-config.yaml
+      mode: 0755
+  #    owner: openshift-installer
+  #    group: openshift-installer
+
+  - name: take a copy of install-config.yaml file to home directory
+    template:
+      src: templates/install-config.yaml.j2
+      dest: /var/tmp/install-config.yaml
+      mode: 0755
+  #    owner: openshift-installer
+  #    group: openshift-installer
+
+  - name: create ignition configs
+    shell: "/usr/local/bin/openshift-install create ignition-configs --dir=/var/tmp/ocp4-deployconfigs"
+
+  - name: create append-bootstrap file
+    template:
+      src: templates/append-bootstrap.ign.j2
+      dest: /var/tmp/ocp4-deployconfigs/append-bootstrap.ign
+
+  - name: create base64 files from required ignition files
+    shell:
+      cmd: |
+        base64 -w0 /var/tmp/ocp4-deployconfigs/master.ign > /var/tmp/ocp4-deployconfigs/master.64
+        base64 -w0 /var/tmp/ocp4-deployconfigs/worker.ign > /var/tmp/ocp4-deployconfigs/worker.64
+        base64 -w0 /var/tmp/ocp4-deployconfigs/append-bootstrap.ign > /var/tmp/ocp4-deployconfigs/append-bootstrap.64
+
+  - name: copy bootstrap ignition file to public dir
+    become: true
+    copy:
+      src: /var/tmp/ocp4-deployconfigs/bootstrap.ign
+      dest: /var/www/html/bootstrap.ign
+      remote_src: yes
+
+
+      
