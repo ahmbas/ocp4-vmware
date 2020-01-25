@@ -4,6 +4,14 @@
   - name: cleanup old install
     shell: rm -rf /var/tmp/ocp4-deployconfigs/
 
+  - name: install packages required for the installer setup
+    become: true
+    yum:
+      state: present
+      name:
+      - python-netaddr
+      - httpd
+
   - name: fetch installer
     get_url:
       url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz

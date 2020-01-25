@@ -16,6 +16,7 @@
       yum:
         state: present
         name:
+        - mkisofs
         - python-netaddr
         - httpd
 
@@ -37,12 +38,11 @@
       get_url:
         url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ iso_name }}
         dest: /var/tmp/
-        checksum: md5:f2d3d56cdef420148c1bf8075c70953e29721df8
 
-    # - name: Get the original BIOS
-    #   get_url:
-    #     url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ rhcos_bios }}
-    #     dest: /var/www/html/
+    - name: Get the original BIOS
+      get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ rhcos_bios }}
+        dest: /var/www/html/
 
     - name: Mount ISO
       mount:
