@@ -18,7 +18,6 @@ networking:
   networkType: "{{openshift_sdn}}"
   serviceNetwork:
   - 172.30.0.0/16
-fips: {{ fips }}
 platform:
   vsphere:
     vcenter: "{{ vcenter_hostname }}"
