@@ -27,4 +27,4 @@ webserver_url: "{{ ansible_default_ipv4.address }}"
 
 # ISO and BIOS
 iso_name: rhcos-{{ ocp_rhcos_version }}-x86_64-installer.iso
-rhcos_bios: rhcos-{{ ocp_rhcos_version }}-x86_64-metal.raw.gz
+rhcos_bios: rhcos-{{ ocp_rhcos_version }}-x86_64-metal-bios.raw.gz
