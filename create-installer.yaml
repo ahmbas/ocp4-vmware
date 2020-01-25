@@ -14,27 +14,25 @@
 
   - name: fetch installer
     get_url:
-      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-install-linux-{{ ocp_version }}.tar.gz
-      dest: /var/tmp/openshift-install-linux-{{ ocp_version }}.tar.gz
-      checksum: md5:d29ba3712b5b268e16adca8ad09dffa3
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
+      dest: /var/tmp/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
 
   - name: fetch clients
     get_url:
-      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_version }}/openshift-client-linux-{{ ocp_version }}.tar.gz
-      dest: /var/tmp/openshift-client-linux-{{ ocp_version }}.tar.gz
-      checksum: md5:ceb34d82ed9932a079addf68ce2520d6
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
+      dest: /var/tmp/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
 
   - name: extract installer
     become: true
     unarchive:
-      src: /var/tmp/openshift-install-linux-{{ ocp_version }}.tar.gz
+      src: /var/tmp/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
       dest: /usr/local/bin
       mode: +x
 
   - name: extract clients
     become: true
     unarchive:
-      src: /var/tmp/openshift-client-linux-{{ ocp_version }}.tar.gz
+      src: /var/tmp/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
       dest: /usr/local/bin
       mode: +x
 

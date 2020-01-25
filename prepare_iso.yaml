@@ -36,12 +36,12 @@
 
     - name: Get the original ISO
       get_url:
-        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ iso_name }}
+        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_rhcos_version }}/{{ iso_name }}
         dest: /var/tmp/
 
     - name: Get the original BIOS
       get_url:
-        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ rhcos_bios }}
+        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_rhcos_version }}/{{ rhcos_bios }}
         dest: /var/www/html/
 
     - name: Mount ISO

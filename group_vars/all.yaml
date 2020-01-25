@@ -7,7 +7,8 @@ vcenter_cluster: "lpvmw-cls"
 vcenter_datacenter: "Linkplus-Demo"
 # OCP version to fetch clients and assets
 ocp_base_verions: 4.3
-ocp_version: 4.3.0
+ocp_clients_version: 4.3.0
+ocp_rhcos_version: 4.3.0
 # Domain info and cluster name
 env_name: ocpdemo
 base_domain: lp.int
@@ -25,5 +26,5 @@ dns: ["192.168.191.13", "192.168.191.14"]
 webserver_url: "{{ ansible_default_ipv4.address }}"
 
 # ISO and BIOS
-iso_name: rhcos-{{ ocp_version }}-x86_64-installer.iso
-rhcos_bios: rhcos-{{ ocp_version }}-x86_64-metal.raw.gz
+iso_name: rhcos-{{ ocp_rhcos_version }}-x86_64-installer.iso
+rhcos_bios: rhcos-{{ ocp_rhcos_version }}-x86_64-metal.raw.gz
