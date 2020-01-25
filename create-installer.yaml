@@ -16,13 +16,11 @@
     get_url:
       url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
       dest: /var/tmp/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
-      checksum: md5:d29ba3712b5b268e16adca8ad09dffa3
 
   - name: fetch clients
     get_url:
       url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
       dest: /var/tmp/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
-      checksum: md5:ceb34d82ed9932a079addf68ce2520d6
 
   - name: extract installer
     become: true
