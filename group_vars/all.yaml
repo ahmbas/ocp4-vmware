@@ -23,7 +23,7 @@ gateway: 192.168.191.250
 netmask: 255.255.255.0
 interface: ens192
 dns: ["192.168.191.13", "192.168.191.14"]
-webserver_url: "{{ ansible_default_ipv4.address }}"
+webserver_url: "192.168.0.112"
 
 # ISO and BIOS
 iso_name: rhcos-{{ ocp_rhcos_version }}-x86_64-installer.iso
