@@ -6,8 +6,9 @@ vm_folder: "/ocpdemo"
 vcenter_cluster: "lpvmw-cls"
 vcenter_datacenter: "Linkplus-Demo"
 # OCP version to fetch clients and assets
-ocp_base_verions: 4.3
-ocp_version: 4.3.0
+ocp_base_verions: 4.2
+ocp_clients_version: 4.2.16
+ocp_rhcos_version: 4.2.0
 # Domain info and cluster name
 env_name: ocpdemo
 base_domain: lp.int
