@@ -1,0 +1,28 @@
+# Define all components for the deployment
+# Different subgroups are created to help the deployment process
+# No need to modify
+all:
+  children:
+    bootstrap_node:
+      hosts:
+        bootstrap.ocpdemo.lp.int:
+          ipv4: 192.168.191.114
+
+    masters:
+      hosts:
+        etcd-0.ocpdemo.lp.int:
+          ipv4: 192.168.191.222
+
+        etcd-1.ocpdemo.lp.int:
+          ipv4: 192.168.191.223
+
+        etcd-2.ocpdemo.lp.int:
+          ipv4: 192.168.191.224
+
+    workers:
+      hosts:
+        worker-0.ocpdemo.lp.int:
+          ipv4: 192.168.1.225
+
+        worker-1.ocpdemo.lp.int:
+          ipv4: 192.168.1.226

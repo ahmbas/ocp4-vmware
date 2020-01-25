@@ -1,0 +1,29 @@
+vcenter_hostname: 192.168.189.18
+vcenter_username: a
+vcenter_password: a
+vcenter_datastore: "tpsw1_p1_d4"
+vm_folder: "/ocpdemo"
+vcenter_cluster: "lpvmw-cls"
+vcenter_datacenter: "Linkplus-Demo"
+# OCP version to fetch clients and assets
+ocp_base_verions: 4.3
+ocp_version: 4.3.0
+# Domain info and cluster name
+env_name: ocpdemo
+base_domain: lp.int
+domain: "{{ env_name }}.{{ base_domain }}"
+# Subscription information for OCP installer
+pull_secret: '{"auths":{"cloud.openshift.com":{"auth":"a=","email":"abashir@redhat.com"},"quay.io":{"auth":"a=","email":"abashir@redhat.com"},"registry.connect.redhat.com":{"auth":"a==","email":"abashir@redhat.com"},"registry.redhat.io":{"auth":"a==","email":"abashir@redhat.com"}}}'
+# FIPS
+fips: true
+openshift_sdn: OpenShiftSDN
+#openshift_sdn: OVNKubernetes
+gateway: 192.168.191.250
+netmask: 255.255.255.0
+interface: ens192
+dns: ["192.168.191.13", "192.168.191.14"]
+webserver_url: "{{ ansible_default_ipv4.address }}"
+
+# ISO and BIOS
+iso_name: rhcos-{{ ocp_version }}-x86_64-installer.iso
+rhcos_bios: rhcos-{{ ocp_version }}-x86_64-metal.raw.gz

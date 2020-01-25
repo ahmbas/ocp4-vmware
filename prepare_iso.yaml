@@ -1,0 +1,133 @@
+---
+- name: Playbook to recreate the RHCOS ISO for static IP
+  hosts: localhost
+  gather_facts: false
+  become: yes
+
+  tasks:
+
+  - block:
+    - name: remove old
+      shell: rm -rf /var/tmp/rhcos_install-*
+      become: yes
+
+    - name: install packages required for the installer setup
+      become: true
+      yum:
+        state: present
+        name:
+        - python-netaddr
+        - httpd
+
+    - name: start httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: open firewall
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: enabled
+      become: yes
+
+    - name: Get the original ISO
+      get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ iso_name }}
+        dest: /var/tmp/
+        checksum: md5:f2d3d56cdef420148c1bf8075c70953e29721df8
+
+    # - name: Get the original BIOS
+    #   get_url:
+    #     url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_version }}/{{ rhcos_bios }}
+    #     dest: /var/www/html/
+
+    - name: Mount ISO
+      mount:
+        src: /var/tmp/{{ iso_name }}
+        path: /mnt/iso
+        fstype: iso9660
+        opts: ro,noauto
+        state: mounted
+      become: true
+
+    - name: Copy contents of iso
+      synchronize:
+        src: /mnt/iso/
+        dest: /var/tmp/rhcos-iso/
+
+- name: Create the required ISOs
+  hosts: all
+  serial: 1
+  gather_facts: false
+
+  tasks:
+
+  - name: Build our additional variables
+    set_fact:
+      cmd_args: "append initrd=/images/initramfs.img nomodeset rd.neednet=1 coreos.inst=yes"
+
+  - name: Add ip address info
+    set_fact:
+      cmd_args: "{{ cmd_args }} ip={{ ipv4 }}::{{ gateway }}:{{ netmask }}:{{ inventory_hostname }}:{{ interface }}:none"
+
+  - name: Add install DNS
+    set_fact:
+      cmd_args: "{{ cmd_args }} nameserver={{ item }}"
+    with_items: "{{dns}}"
+
+  - name: Add install device name
+    set_fact:
+      cmd_args: "{{ cmd_args }} coreos.inst.install_dev=sda"
+
+  - name: Add image_url
+    set_fact:
+      cmd_args: "{{ cmd_args }} coreos.inst.image_url={{ webserver_url }}/{{ rhcos_bios }}"
+
+  - name: show
+    debug:
+      msg: "{{ cmd_args }} coreos.inst.image_url={{ webserver_url }}/{{ rhcos_bios }}"
+
+  - name: Add ignition_url
+    set_fact:
+      cmd_args: "{{ cmd_args }} coreos.inst.ignition_url={{ webserver_url }}/{{ inventory_hostname_short }}.ign"
+
+  - name: Replace the isolinux.cfg file
+    template:
+      src: isolinux.cfg.j2
+      dest: /var/tmp/rhcos-iso/isolinux/isolinux.cfg
+    delegate_to: localhost
+    become: yes
+
+  - name: Create new ISO image
+    command: >
+         /usr/bin/mkisofs -U -A 'RHCOS-x86_64' -V 'RHCOS-x86_64' -volset 'RHCOS-x86_64' -J -joliet-long -r -v -T
+           -x ./lost+found -o /var/tmp/rhcos_install-{{ inventory_hostname_short}}.iso -b isolinux/isolinux.bin
+           -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img
+           -no-emul-boot .
+    args:
+      chdir: /var/tmp/rhcos-iso/
+      creates: /var/tmp/rhcos_install-{{ inventory_hostname_short }}.iso
+    become: true
+    delegate_to: localhost
+
+- name: Cleanup tasks
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+  - block:
+    - name: Unmount ISO
+      mount:
+        path: /mnt/iso
+        state: absent
+
+    - name: Remove ISO copy
+      file:
+        path: /var/tmp/rhcos-iso
+        state: absent
+    become: true
+...

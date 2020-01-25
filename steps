@@ -14,15 +14,8 @@
 
 5- Create a new install-config. Always use a fresh one everytime and delete the old one. Make sure number of workers match number of workers to be provisioned.
 6- Add the following configuration param to the all VMs. Replace ignition with proper one (bootstrap-append, master, worker)
-	- key: "guestinfo.ignition.config.data"
-    value: "{{ lookup('file', '/var/tmp/ocp4-deployconfigs/<machine-type>.64') }}"
-  - key: "guestinfo.ignition.config.data.encoding"
-    value: "base64"
   - key: "disk.EnableUUID"
     value: "TRUE"
-  - key: "guestinfo.ovfEnv"
-    value: |
-      <Environment oe:id="" xmlns="http://schemas.dmtf.org/ovf/environment/1" xmlns:oe="http://schemas.dmtf.org/ovf/environment/1" xmlns:ve="http://www.vmware.com/schema/ovfenv" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><PropertySection><Property oe:key="guestinfo.ignition.config.data" oe:value="{{ lookup('file', '/var/tmp/ocp4-deployconfigs/<machine-type>') }}"/><Property oe:key="guestinfo.ignition.config.data.encoding" oe:value="base64"/></PropertySection></Environment>
 
 7- Power on bootstrap. Wait till bootstrap machine is up and running and the machine config port is listening 22623.
 8- Sometimes LB needs to be restarted at this point. (Haproxy.nginx, gobetween etc)

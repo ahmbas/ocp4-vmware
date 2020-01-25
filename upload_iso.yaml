@@ -1,0 +1,25 @@
+- name: Create the required ISOs
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: copy pyvmomi
+    become: true
+    copy:
+      src: pyvmomi
+      dest: /opt
+
+  - name: pyvmomi install
+    become: true
+    shell: "cd /opt/pyvmomi && python setup.py install"
+
+  - name: upload RHCOS iso iso
+    vsphere_copy:
+      host: '{{ vcenter_hostname }}'
+      login: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      src: /var/tmp/rhcos_install-{{ inventory_hostname_short }}.iso
+      datacenter: '{{vcenter_datacenter}}'
+      validate_certs: no
+      datastore: '{{vcenter_datastore}}'
+      path: ocp_rhcos/rhcos_install-{{ inventory_hostname_short }}.iso
+    delegate_to: localhost
