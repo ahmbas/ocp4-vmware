@@ -28,3 +28,7 @@ webserver_url: "192.168.191.14"
 # ISO and BIOS
 iso_name: rhcos-{{ ocp_rhcos_version }}-x86_64-installer.iso
 rhcos_bios: rhcos-{{ ocp_rhcos_version }}-x86_64-metal-bios.raw.gz
+additional_trust_bundle: |
+    -----BEGIN CERTIFICATE-----
+    abc
+    -----END CERTIFICATE-----
