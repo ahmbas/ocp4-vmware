@@ -12,6 +12,20 @@
       - python-netaddr
       - httpd
 
+  - name: start httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    become: yes
+
+  - name: open firewall
+    firewalld:
+      port: 80/tcp
+      permanent: yes
+      state: enabled
+    become: yes
+
   - name: fetch installer
     get_url:
       url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-install-linux-{{ ocp_clients_version }}.tar.gz
@@ -21,6 +35,11 @@
     get_url:
       url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ ocp_clients_version }}/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
       dest: /var/tmp/openshift-client-linux-{{ ocp_clients_version }}.tar.gz
+
+  - name: fetch the original BIOS
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_rhcos_version }}/{{ rhcos_bios }}
+      dest: /var/www/html/
 
   - name: extract installer
     become: true
@@ -41,8 +60,6 @@
       path: /var/tmp/ocp4-deployconfigs
       state: directory
       mode: 0755
-  #    owner: openshift-installer
-  #    group: openshift-installer
 
   - name: copy config file to correct place
     template:
@@ -83,3 +100,19 @@
       remote_src: yes
     with_items:
         - "{{ groups['workers'] | sort }}"
+
+  - name: Add static hostnames masters
+    replace:
+      path: "/var/www/html/{{ hostvars[item]['inventory_hostname_short'] }}.ign"
+      regexp: '"storage":{}'
+      replace: '"storage":{"files":[{"filesystem":"root","path":"/etc/hostname","mode":420,"contents":{"source":"data:,{{hostvars[item]["inventory_hostname"]}}"}}]}'
+    with_items:
+      - "{{ groups['masters'] | sort }}"
+
+  - name: Add static hostnames workers
+    replace:
+      path: "/var/www/html/{{ hostvars[item]['inventory_hostname_short'] }}.ign"
+      regexp: '"storage":{}'
+      replace: '"storage":{"files":[{"filesystem":"root","path":"/etc/hostname","mode":420,"contents":{"source":"data:,{{hostvars[item]["inventory_hostname"]}}"}}]}'
+    with_items:
+      - "{{ groups['workers'] | sort }}"

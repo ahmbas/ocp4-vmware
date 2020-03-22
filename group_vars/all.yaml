@@ -7,7 +7,7 @@ vcenter_cluster: "lpvmw-cls"
 vcenter_datacenter: "Linkplus-Demo"
 # OCP version to fetch clients and assets
 ocp_base_verions: 4.3
-ocp_clients_version: 4.3.0
+ocp_clients_version: 4.3.8
 ocp_rhcos_version: 4.3.0
 # Domain info and cluster name
 env_name: ocpdemo
@@ -16,14 +16,21 @@ domain: "{{ env_name }}.{{ base_domain }}"
 # Subscription information for OCP installer
 pull_secret: '{"auths":{"cloud.openshift.com":{"auth":"a=","email":"abashir@redhat.com"},"quay.io":{"auth":"a=","email":"abashir@redhat.com"},"registry.connect.redhat.com":{"auth":"a==","email":"abashir@redhat.com"},"registry.redhat.io":{"auth":"a==","email":"abashir@redhat.com"}}}'
 # FIPS
-fips: true
+fips: false
 openshift_sdn: OpenShiftSDN
 #openshift_sdn: OVNKubernetes
-gateway: 192.168.191.250
+gateway: 192.168.1.1
 netmask: 255.255.255.0
 interface: ens192
-dns: ["192.168.191.13", "192.168.191.14"]
-webserver_url: "192.168.0.112"
+dns: ["8.8.8.8", "8.8.4.4"]
+webserver_url: "192.168.1.115"
+http_proxy: "http://ahmed.dc.com"
+https_proxy: "http://ahmed.dc.com"
+no_proxy: "dc.com, abc.dc.com"
+machine_cidr: "10.11.12.0/24"
+service_network: "172.30.0.0/16"
+cluster_network: "10.128.0.0/14"
+host_prefix: 26
 
 # ISO and BIOS
 iso_name: rhcos-{{ ocp_rhcos_version }}-x86_64-installer.iso

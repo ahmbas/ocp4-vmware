@@ -6,18 +6,18 @@ all:
     bootstrap_node:
       hosts:
         bootstrap.ocpdemo.lp.int:
-          ipv4: 192.168.191.114
+          ipv4: 192.168.1.114
 
     masters:
       hosts:
         etcd-0.ocpdemo.lp.int:
-          ipv4: 192.168.191.222
+          ipv4: 192.168.1.222
 
         etcd-1.ocpdemo.lp.int:
-          ipv4: 192.168.191.223
+          ipv4: 192.168.1.223
 
         etcd-2.ocpdemo.lp.int:
-          ipv4: 192.168.191.224
+          ipv4: 192.168.1.224
 
     workers:
       hosts:

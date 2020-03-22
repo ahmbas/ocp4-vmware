@@ -17,32 +17,11 @@
         state: present
         name:
         - mkisofs
-        - python-netaddr
-        - httpd
-
-    - name: start httpd
-      service:
-        name: httpd
-        state: started
-        enabled: yes
-      become: yes
-
-    - name: open firewall
-      firewalld:
-        port: 80/tcp
-        permanent: yes
-        state: enabled
-      become: yes
 
     - name: Get the original ISO
       get_url:
         url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_rhcos_version }}/{{ iso_name }}
         dest: /var/tmp/
-
-    - name: Get the original BIOS
-      get_url:
-        url: https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{ ocp_base_verions }}/{{ ocp_rhcos_version }}/{{ rhcos_bios }}
-        dest: /var/www/html/
 
     - name: Mount ISO
       mount:
@@ -62,16 +41,10 @@
   hosts: all
   serial: 1
   gather_facts: false
-
   tasks:
-
-  - name: Build our additional variables
-    set_fact:
-      cmd_args: "append initrd=/images/initramfs.img nomodeset rd.neednet=1 coreos.inst=yes"
-
   - name: Add ip address info
     set_fact:
-      cmd_args: "{{ cmd_args }} ip={{ ipv4 }}::{{ gateway }}:{{ netmask }}:{{ inventory_hostname }}:{{ interface }}:none"
+      cmd_args: " ip={{ ipv4 }}::{{ gateway }}:{{ netmask }}:{{ inventory_hostname }}:{{ interface }}:none"
 
   - name: Add install DNS
     set_fact:
@@ -86,18 +59,14 @@
     set_fact:
       cmd_args: "{{ cmd_args }} coreos.inst.image_url={{ webserver_url }}/{{ rhcos_bios }}"
 
-  - name: show
-    debug:
-      msg: "{{ cmd_args }} coreos.inst.image_url={{ webserver_url }}/{{ rhcos_bios }}"
-
   - name: Add ignition_url
     set_fact:
       cmd_args: "{{ cmd_args }} coreos.inst.ignition_url={{ webserver_url }}/{{ inventory_hostname_short }}.ign"
 
   - name: Replace the isolinux.cfg file
     template:
-      src: isolinux.cfg.j2
-      dest: /var/tmp/rhcos-iso/isolinux/isolinux.cfg
+      src: grub.cfg.j2
+      dest: /var/tmp/rhcos-iso/EFI/redhat/grub.cfg
     delegate_to: localhost
     become: yes
 
