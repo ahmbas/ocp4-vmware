@@ -7,3 +7,6 @@ Upload the ISOs to vsphere datastore. Tweak using the inventory.yaml and the gro
 
 ## create-installer.yaml
 Create the ignition files and setup a apache webserver to serve them. Tweak using the inventory.yaml and the group_vars/all.yaml
+
+### Known Issues
+Currently only works with UEFI boot enabled.
