@@ -63,7 +63,7 @@
     set_fact:
       cmd_args: "{{ cmd_args }} coreos.inst.ignition_url={{ webserver_url }}/{{ inventory_hostname_short }}.ign"
 
-  - name: Replace the isolinux.cfg file
+  - name: Replace the grub.cfg file for UEFI
     template:
       src: grub.cfg.j2
       dest: /var/tmp/rhcos-iso/EFI/redhat/grub.cfg
