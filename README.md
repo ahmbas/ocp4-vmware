@@ -1,6 +1,7 @@
 # ocp4-vmware
 ## prepare-iso.yaml
 Create the ISOs for RHCOS with static IP configuration. Tweak using the inventory.yaml and the group_vars/all.yaml
+Assuming UEFI boot.
 
 ## upload-iso.yaml
 Upload the ISOs to vsphere datastore. Tweak using the inventory.yaml and the group_vars/all.yaml
