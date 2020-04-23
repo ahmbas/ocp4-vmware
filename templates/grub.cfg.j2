@@ -22,8 +22,7 @@ set timeout=60
 
 ### BEGIN /etc/grub.d/10_linux ###
 menuentry 'Install RHEL CoreOS' --class fedora --class gnu-linux --class gnu --class os {
-        linux /images/vmlinuz nomodeset {{cmd_args}}
+        linux /images/vmlinuz nomodeset rd.neednet=1 coreos.inst=yes {{cmd_args}}
         initrd /images/initramfs.img
 }
-
 
